@@ -31,7 +31,7 @@ release: clean
 # Build the genie cni plugin
 dist/genie: $(SRCFILES)
 	echo "Building genie plugin..."
-	@GOPATH=$(GO_PATH) CGO_ENABLED=0 go build -v -i -o dist/genie \
+	@GOPATH=$(GO_PATH) CGO_ENABLED=0 go build -v -o dist/genie \
 	-ldflags "-X main.VERSION=1.0 -s -w" cni-genie.go
 
 nw-admission-controller-binary:

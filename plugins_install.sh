@@ -63,7 +63,7 @@ Delete_AllPlugins() {
   kubectl delete -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
   kubectl delete -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml
   kubectl delete -f https://raw.githubusercontent.com/romana/romana/master/containerize/specs/romana-kubeadm.yml
-  kubectl delete -f https://docs.projectcalico.org/v2.6/getting-started/kubernetes/installation/hosted/kubeadm/1.6/calico.yaml
+  kubectl delete -f https://docs.projectcalico.org/v3.0/getting-started/kubernetes/installation/hosted/kubeadm/1.7/calico.yaml
   echo "All plugins deleted"
 }
 
