@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/containernetworking/cni/libcni"
-	"github.com/containernetworking/cni/pkg/types"
-	"github.com/containernetworking/cni/pkg/types/current"
 	"net"
 	"os"
 	"strings"
+
+	"github.com/containernetworking/cni/libcni"
+	"github.com/containernetworking/cni/pkg/types"
+	types040 "github.com/containernetworking/cni/pkg/types/040"
 )
 
 type FakeIo struct {
@@ -65,25 +66,25 @@ var ip map[string]net.IPNet
 
 func (fi *FakeIo) ReadFile(file string) ([]byte, error) {
 	if file == "" {
-		return nil, errors.New("Invalid file path")
+		return nil, errors.New("invalid file path")
 	}
 	if c, ok := config[parseFileName(file)]; ok {
 		return []byte(c), nil
 	} else {
-		return nil, errors.New("File not present")
+		return nil, errors.New("file not present")
 	}
 }
 
 func (fi *FakeIo) ReadDir(dir string) ([]os.FileInfo, error) {
 	if dir == "" {
-		return nil, errors.New("Invalid directory path")
+		return nil, errors.New("invalid directory path")
 	}
 	return nil, nil
 }
 
 func (fi *FakeIo) CreateFile(filePath string, bytes []byte, perm os.FileMode) error {
 	if filePath == "" {
-		return errors.New("Invalid file path")
+		return errors.New("invalid file path")
 	}
 	config[parseFileName(filePath)] = string(bytes)
 	fi.Files = append(fi.Files, filePath)
@@ -120,10 +121,10 @@ func SetIp(cni []string) {
 }
 
 func buildResult(cni string) types.Result {
-	res := current.Result{}
+	res := types040.Result{}
 	ipaddr := ip[cni].IP
 	fmt.Println("ip[cni]:", ipaddr)
-	res.IPs = []*current.IPConfig{{Version: "4", Address: net.IPNet{IP: ipaddr, Mask: ipaddr.DefaultMask()}}}
+	res.IPs = []*types040.IPConfig{{Version: "4", Address: net.IPNet{IP: ipaddr, Mask: ipaddr.DefaultMask()}}}
 	i := ipaddr.To4()
 	i[3]++
 	ip[cni] = net.IPNet{IP: i}

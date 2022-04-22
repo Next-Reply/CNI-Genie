@@ -1,16 +1,18 @@
 package client
 
 import (
+	"context"
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/cni-genie/CNI-Genie/utils"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
 	restclient "k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
-	"os"
-	"strings"
 )
 
 type ClientInterface interface {
@@ -24,7 +26,7 @@ type KubeClient struct {
 }
 
 func (kc *KubeClient) GetPod(name, namespace string) (*v1.Pod, error) {
-	pod, err := kc.CoreV1().Pods(namespace).Get(name, metav1.GetOptions{})
+	pod, err := kc.CoreV1().Pods(namespace).Get(context.Background(), name, metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +35,7 @@ func (kc *KubeClient) GetPod(name, namespace string) (*v1.Pod, error) {
 }
 
 func (kc *KubeClient) PatchPod(name, namespace string, pt types.PatchType, data []byte) (*v1.Pod, error) {
-	pod, err := kc.CoreV1().Pods(namespace).Patch(name, pt, data)
+	pod, err := kc.CoreV1().Pods(namespace).Patch(context.Background(), name, pt, data, metav1.PatchOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +44,7 @@ func (kc *KubeClient) PatchPod(name, namespace string, pt types.PatchType, data 
 }
 
 func (kc *KubeClient) GetRaw(path string) ([]byte, error) {
-	obj, err := kc.ExtensionsV1beta1().RESTClient().Get().AbsPath(path).DoRaw()
+	obj, err := kc.ExtensionsV1beta1().RESTClient().Get().AbsPath(path).DoRaw(context.Background())
 	if err != nil {
 		return nil, err
 	}

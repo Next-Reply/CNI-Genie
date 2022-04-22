@@ -19,6 +19,7 @@ networking or pod multi-IP based networking.
 package genie
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -28,6 +29,8 @@ import (
 	"strings"
 
 	"errors"
+	"sync"
+
 	"github.com/cni-genie/CNI-Genie/client"
 	it "github.com/cni-genie/CNI-Genie/interfaces"
 	"github.com/cni-genie/CNI-Genie/plugins"
@@ -35,12 +38,11 @@ import (
 	"github.com/containernetworking/cni/libcni"
 	"github.com/containernetworking/cni/pkg/skel"
 	"github.com/containernetworking/cni/pkg/types"
-	"github.com/containernetworking/cni/pkg/types/current"
-	"k8s.io/api/core/v1"
+	current "github.com/containernetworking/cni/pkg/types/040"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	api "k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
-	"sync"
 )
 
 const (
@@ -434,7 +436,7 @@ func (gc *GenieController) UpdatePodDefinition(statusAnnot string, status []byte
 		`{"metadata":{"annotations":{"%s":%s}}}`, statusAnnot, strconv.Quote(string(status)))
 
 	fmt.Fprintf(os.Stderr, "CNI Genie pod.Annotations[%s] after = %s\n", statusAnnot, annot)
-	_, err := gc.Kc.CoreV1().Pods(string(k8sArgs.K8S_POD_NAMESPACE)).Patch(string(k8sArgs.K8S_POD_NAME), api.StrategicMergePatchType, []byte(annot))
+	_, err := gc.Kc.CoreV1().Pods(string(k8sArgs.K8S_POD_NAMESPACE)).Patch(context.Background(), string(k8sArgs.K8S_POD_NAME), api.StrategicMergePatchType, []byte(annot), metav1.PatchOptions{})
 	if err != nil {
 		return fmt.Errorf("CNI Genie Error updating pod = %s", err)
 	}
@@ -443,7 +445,7 @@ func (gc *GenieController) UpdatePodDefinition(statusAnnot string, status []byte
 
 // GetPodDefinition gets pod definition through k8s api server
 func GetPodDefinition(client *kubernetes.Clientset, podNamespace string, podName string) (*v1.Pod, error) {
-	pod, err := client.CoreV1().Pods(podNamespace).Get(fmt.Sprintf("%s", podName), metav1.GetOptions{})
+	pod, err := client.CoreV1().Pods(podNamespace).Get(context.Background(), fmt.Sprintf("%s", podName), metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}

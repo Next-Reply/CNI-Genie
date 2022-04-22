@@ -3,14 +3,16 @@ package genie
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/cni-genie/CNI-Genie/networkcrd"
-	"github.com/cni-genie/CNI-Genie/utils"
-	"github.com/containernetworking/cni/pkg/types/current"
 	"os"
 	"strconv"
+
+	"github.com/cni-genie/CNI-Genie/networkcrd"
+	"github.com/cni-genie/CNI-Genie/utils"
+	current "github.com/containernetworking/cni/pkg/types/040"
+	types040 "github.com/containernetworking/cni/pkg/types/040"
 )
 
-func setGenieStatus(result current.Result, name, ifName string, currStatus interface{}) interface{} {
+func setGenieStatus(result types040.Result, name, ifName string, currStatus interface{}) interface{} {
 	multiIPPreferences := &utils.MultiIPPreferences{}
 	var ok bool
 	if currStatus == nil {
