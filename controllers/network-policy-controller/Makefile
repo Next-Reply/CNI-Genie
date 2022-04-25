@@ -23,5 +23,5 @@ clean:
 	rm -rf dist
 
 dist/genie-policy: $(DEPS)
-	@GOPATH=$(GO_PATH) CGO_ENABLED=0 go build -v -i -o dist/genie-policy \
+	@GOPATH=$(GO_PATH) CGO_ENABLED=0 go build -v -o dist/genie-policy \
 	-ldflags "-X main.VERSION=1.0 -s -w" $(SRCFILES)

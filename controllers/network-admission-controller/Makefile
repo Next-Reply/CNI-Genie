@@ -19,5 +19,5 @@ clean:
 	rm -rf dist
 
 dist/nw-adm-cont: $(SRCFILES)
-	@GOPATH=$(GO_PATH) CGO_ENABLED=0 go build -v -i -o dist/network-admission-controller \
+	@GOPATH=$(GO_PATH) CGO_ENABLED=0 go build -v -o dist/network-admission-controller \
 	-ldflags "-X main.VERSION=1.0 -s -w" $(SRCFILES)

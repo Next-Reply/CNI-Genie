@@ -17,6 +17,7 @@ limitations under the License.
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
@@ -46,7 +47,7 @@ func getClient() *kubernetes.Clientset {
 // retrieve the CA cert that will signed the cert used by the
 // "GenericAdmissionWebhook" plugin admission controller.
 func getAPIServerCert(clientset *kubernetes.Clientset) []byte {
-	c, err := clientset.CoreV1().ConfigMaps("kube-system").Get("extension-apiserver-authentication", metav1.GetOptions{})
+	c, err := clientset.CoreV1().ConfigMaps("kube-system").Get(context.Background(), "extension-apiserver-authentication", metav1.GetOptions{})
 	if err != nil {
 		glog.Fatal(err)
 	}
@@ -80,9 +81,9 @@ func configTLS(clientset *kubernetes.Clientset) *tls.Config {
 func selfRegistration(clientset *kubernetes.Clientset, caCert []byte) {
 	time.Sleep(10 * time.Second)
 	client := clientset.AdmissionregistrationV1beta1().ValidatingWebhookConfigurations()
-	_, err := client.Get("genie-network-admission-controller-config", metav1.GetOptions{})
+	_, err := client.Get(context.Background(), "genie-network-admission-controller-config", metav1.GetOptions{})
 	if err == nil {
-		if err2 := client.Delete("genie-network-admission-controller-config", nil); err2 != nil {
+		if err2 := client.Delete(context.Background(), "genie-network-admission-controller-config", metav1.DeleteOptions{}); err2 != nil {
 			glog.Fatal(err2)
 		}
 	}
@@ -112,7 +113,7 @@ func selfRegistration(clientset *kubernetes.Clientset, caCert []byte) {
 			},
 		},
 	}
-	if _, err := client.Create(webhookConfig); err != nil {
+	if _, err := client.Create(context.Background(), webhookConfig, metav1.CreateOptions{}); err != nil {
 		glog.Fatal(err)
 	}
 	glog.Info("selfRegistration completed")

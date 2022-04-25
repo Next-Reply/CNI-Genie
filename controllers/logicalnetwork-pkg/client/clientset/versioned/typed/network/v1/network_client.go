@@ -66,7 +66,9 @@ func setConfigDefaults(config *rest.Config) error {
 	gv := v1.SchemeGroupVersion
 	config.GroupVersion = &gv
 	config.APIPath = "/apis"
-	config.NegotiatedSerializer = serializer.DirectCodecFactory{CodecFactory: scheme.Codecs}
+	// serializer.DirectCodecFactory{CodecFactory: scheme.Codecs}
+
+	config.NegotiatedSerializer = serializer.NewCodecFactory(scheme.Scheme)
 
 	if config.UserAgent == "" {
 		config.UserAgent = rest.DefaultKubernetesUserAgent()

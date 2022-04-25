@@ -17,18 +17,21 @@ limitations under the License.
 package main
 
 import (
+	"context"
 	"encoding/json"
+
 	"k8s.io/api/admission/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"flag"
 	"fmt"
+	"net"
+	"os"
+
 	genieUtils "github.com/cni-genie/CNI-Genie/utils"
 	"github.com/golang/glog"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
-	"net"
-	"os"
 )
 
 /* Info carrying plugin name and subnet ranges already used logical networks*/
@@ -153,7 +156,7 @@ func validateNetworkParas(logicalNetwork *genieUtils.LogicalNetwork) *v1beta1.Ad
 	physicalNwPath := fmt.Sprintf("/apis/alpha.network.k8s.io/v1/namespaces/%s/physicalnetworks/%s",
 		logicalNetwork.ObjectMeta.Namespace, phyNwName)
 
-	physicalNwObj, err := client.ExtensionsV1beta1().RESTClient().Get().AbsPath(physicalNwPath).DoRaw()
+	physicalNwObj, err := client.ExtensionsV1beta1().RESTClient().Get().AbsPath(physicalNwPath).DoRaw(context.Background())
 
 	if err != nil {
 		admissionResponse.Result = &metav1.Status{

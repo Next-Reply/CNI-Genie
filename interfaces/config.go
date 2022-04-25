@@ -2,10 +2,11 @@ package interfaces
 
 import (
 	"fmt"
-	"github.com/containernetworking/cni/libcni"
-	"k8s.io/apimachinery/pkg/util/json"
 	"os"
 	"strings"
+
+	"github.com/containernetworking/cni/libcni"
+	"k8s.io/apimachinery/pkg/util/json"
 )
 
 const (

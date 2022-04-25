@@ -14,6 +14,8 @@
 package v1
 
 import (
+	"context"
+
 	scheme "github.com/cni-genie/CNI-Genie/controllers/logicalnetwork-pkg/client/clientset/versioned/scheme"
 	v1 "github.com/cni-genie/CNI-Genie/utils"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -63,7 +65,7 @@ func (c *logicalNetworks) Get(name string, options meta_v1.GetOptions) (result *
 		Resource("logicalnetworks").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -75,7 +77,7 @@ func (c *logicalNetworks) List(opts meta_v1.ListOptions) (result *v1.LogicalNetw
 		Namespace(c.ns).
 		Resource("logicalnetworks").
 		VersionedParams(&opts, scheme.ParameterCodec).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -87,7 +89,7 @@ func (c *logicalNetworks) Watch(opts meta_v1.ListOptions) (watch.Interface, erro
 		Namespace(c.ns).
 		Resource("logicalnetworks").
 		VersionedParams(&opts, scheme.ParameterCodec).
-		Watch()
+		Watch(context.Background())
 }
 
 // Create takes the representation of a logicalNetwork and creates it.  Returns the server's representation of the logicalNetwork, and an error, if there is any.
@@ -97,7 +99,7 @@ func (c *logicalNetworks) Create(logicalNetwork *v1.LogicalNetwork) (result *v1.
 		Namespace(c.ns).
 		Resource("logicalnetworks").
 		Body(logicalNetwork).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -110,7 +112,7 @@ func (c *logicalNetworks) Update(logicalNetwork *v1.LogicalNetwork) (result *v1.
 		Resource("logicalnetworks").
 		Name(logicalNetwork.Name).
 		Body(logicalNetwork).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
@@ -122,7 +124,7 @@ func (c *logicalNetworks) Delete(name string, options *meta_v1.DeleteOptions) er
 		Resource("logicalnetworks").
 		Name(name).
 		Body(options).
-		Do().
+		Do(context.Background()).
 		Error()
 }
 
@@ -133,7 +135,7 @@ func (c *logicalNetworks) DeleteCollection(options *meta_v1.DeleteOptions, listO
 		Resource("logicalnetworks").
 		VersionedParams(&listOptions, scheme.ParameterCodec).
 		Body(options).
-		Do().
+		Do(context.Background()).
 		Error()
 }
 
@@ -146,7 +148,7 @@ func (c *logicalNetworks) Patch(name string, pt types.PatchType, data []byte, su
 		SubResource(subresources...).
 		Name(name).
 		Body(data).
-		Do().
+		Do(context.Background()).
 		Into(result)
 	return
 }
