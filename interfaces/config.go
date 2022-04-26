@@ -73,27 +73,29 @@ func (c *CNIConfig) GetConfFiles() ([]string, error) {
 }
 
 func (c *CNIConfig) ParseCNIConfFromFile(file string) (*libcni.NetworkConfigList, error) {
+	fmt.Fprintf(os.Stderr, "ParseCNIConfFromFile for file %v", file)
 	var err error
 	var confList *libcni.NetworkConfigList
 	if strings.HasSuffix(file, ".conflist") {
 		confList, err = c.ConfListFromFile(file)
 		if err != nil {
-			return nil, fmt.Errorf("Error loading CNI config list file %s: %v", file, err)
+			return nil, fmt.Errorf("error loading CNI config list file %s: %v", file, err)
 		}
 	} else {
 		conf, err := c.ConfFromFile(file)
 		if err != nil {
-			return nil, fmt.Errorf("Error loading CNI config file %s: %v", file, err)
+			return nil, fmt.Errorf("error loading CNI config file %s: %v", file, err)
 		}
+		fmt.Fprintf(os.Stderr, "config loaded from file %+v", conf)
 		// Ensure the config has a "type" so we know what plugin to run.
 		// Also catches the case where somebody put a conflist into a conf file.
 		if conf.Network.Type == "" {
-			return nil, fmt.Errorf("Error loading CNI config file %s: no 'type'; perhaps this is a .conflist?", file)
+			return nil, fmt.Errorf("error loading CNI config file %s: no 'type'; perhaps this is a .conflist?", file)
 		}
 
 		confList, err = c.ConfListFromConf(conf)
 		if err != nil {
-			return nil, fmt.Errorf("Error converting CNI config file %s to list: %v", file, err)
+			return nil, fmt.Errorf("error converting CNI config file %s to list: %v", file, err)
 		}
 	}
 	if len(confList.Plugins) == 0 {
@@ -106,7 +108,7 @@ func (c *CNIConfig) ParseCNIConfFromBytes(bytes []byte) (*libcni.NetworkConfigLi
 	config := make(map[string]interface{})
 	err := json.Unmarshal(bytes, &config)
 	if err != nil {
-		return nil, fmt.Errorf("Error unmarshalling config bytes: %v", err)
+		return nil, fmt.Errorf("error unmarshalling config bytes: %v", err)
 	}
 
 	if _, ok := config["plugins"]; ok {

@@ -12,11 +12,11 @@ default: binary
 
 policy-controller: binary image
 
-binary: clean dist/genie-policy
+binary: clean dist/genie-policy image
 
 image:
 	docker build --no-cache -t genie-policy .
-	docker tag genie-policy:latest quay.io/huawei-cni-genie/genie-policy-controller:latest
+	docker tag genie-policy:latest ghcr.io/next-reply/genie-policy-controller:latest
 	docker rmi genie-policy:latest
 
 clean:

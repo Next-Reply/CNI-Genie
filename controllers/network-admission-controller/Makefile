@@ -9,11 +9,11 @@ default: binary
 
 admission-controller: binary image
 
-binary: clean dist/nw-adm-cont
+binary: clean dist/nw-adm-cont image
 
 image:
 	docker build --no-cache -t genie-adm .
-	docker tag genie-adm:latest quay.io/huawei-cni-genie/genie-admission-controller:latest
+	docker tag genie-adm:latest ghcr.io/next-reply/genie-admission-controller:latest
 	docker rmi genie-adm:latest
 clean:
 	rm -rf dist

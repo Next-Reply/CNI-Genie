@@ -14,31 +14,31 @@ type CNI interface {
 
 type Cni struct{}
 
-func (_ *Cni) ConfListFromFile(file string) (*libcni.NetworkConfigList, error) {
+func (c *Cni) ConfListFromFile(file string) (*libcni.NetworkConfigList, error) {
 	return libcni.ConfListFromFile(file)
 }
 
-func (_ *Cni) ConfListFromBytes(bytes []byte) (*libcni.NetworkConfigList, error) {
+func (c *Cni) ConfListFromBytes(bytes []byte) (*libcni.NetworkConfigList, error) {
 	return libcni.ConfListFromBytes(bytes)
 }
 
-func (_ *Cni) ConfFromFile(file string) (*libcni.NetworkConfig, error) {
+func (c *Cni) ConfFromFile(file string) (*libcni.NetworkConfig, error) {
 	return libcni.ConfFromFile(file)
 }
 
-func (_ *Cni) ConfFromBytes(bytes []byte) (*libcni.NetworkConfig, error) {
+func (c *Cni) ConfFromBytes(bytes []byte) (*libcni.NetworkConfig, error) {
 	return libcni.ConfFromBytes(bytes)
 }
 
-func (_ *Cni) ConfListFromConf(conf *libcni.NetworkConfig) (*libcni.NetworkConfigList, error) {
+func (c *Cni) ConfListFromConf(conf *libcni.NetworkConfig) (*libcni.NetworkConfigList, error) {
 	return libcni.ConfListFromConf(conf)
 }
 
-func (_ *Cni) ConfFiles(dir string, ext []string) ([]string, error) {
+func (c *Cni) ConfFiles(dir string, ext []string) ([]string, error) {
 	return libcni.ConfFiles(dir, ext)
 }
 
-func (_ *Cni) ConfListFromConfBytes(confBytes []byte) (*libcni.NetworkConfigList, error) {
+func (c *Cni) ConfListFromConfBytes(confBytes []byte) (*libcni.NetworkConfigList, error) {
 	conf, err := libcni.ConfFromBytes(confBytes)
 	if err != nil {
 		return nil, err

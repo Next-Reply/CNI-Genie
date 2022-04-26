@@ -3,14 +3,15 @@ package networkcrd
 import (
 	"encoding/json"
 	"fmt"
-	client "github.com/cni-genie/CNI-Genie/client"
-	it "github.com/cni-genie/CNI-Genie/interfaces"
-	"github.com/cni-genie/CNI-Genie/utils"
-	"github.com/containernetworking/cni/libcni"
 	"net"
 	"os"
 	"regexp"
 	"strings"
+
+	client "github.com/cni-genie/CNI-Genie/client"
+	it "github.com/cni-genie/CNI-Genie/interfaces"
+	"github.com/cni-genie/CNI-Genie/utils"
+	"github.com/containernetworking/cni/libcni"
 )
 
 func matchRegex(str string) error {
@@ -71,7 +72,7 @@ func GetNetworkInfo(annotation, podNs string) ([]NetworkSelectionElement, error)
 	if true == strings.ContainsAny(annotation, "[{") {
 		err := json.Unmarshal([]byte(annotation), &networks)
 		if err != nil {
-			return nil, fmt.Errorf("Error unmarshalling network annotation: %v", err)
+			return nil, fmt.Errorf("error unmarshalling network annotation: %v", err)
 		}
 
 		for i := range networks {
@@ -79,7 +80,7 @@ func GetNetworkInfo(annotation, podNs string) ([]NetworkSelectionElement, error)
 				networks[i].Namespace = podNs
 			}
 			if err = validateFields(networks[i]); err != nil {
-				return nil, fmt.Errorf("Error in validation: %v", err)
+				return nil, fmt.Errorf("error in validation: %v", err)
 			}
 		}
 	} else {
@@ -92,7 +93,7 @@ func GetNetworkInfo(annotation, podNs string) ([]NetworkSelectionElement, error)
 				network.Namespace = podNs
 			}
 			if err := validateFields(network); err != nil {
-				return nil, fmt.Errorf("Error in validation: %v", err)
+				return nil, fmt.Errorf("error in validation: %v", err)
 			}
 
 			networks = append(networks, network)
@@ -119,26 +120,26 @@ func GetConfigFromSpec(networkCrd *NetworkAttachmentDefinition, cni it.CNI) (*li
 	var netConfigList *libcni.NetworkConfigList
 	err := json.Unmarshal(configbytes, &config)
 	if err != nil {
-		return nil, fmt.Errorf("Error parsing plugin configuration data: %v", err)
+		return nil, fmt.Errorf("error parsing plugin configuration data: %v", err)
 	}
 
 	if name, ok := config["name"].(string); !ok || strings.TrimSpace(name) == "" {
 		config["name"] = networkCrd.Name
 		configbytes, err = json.Marshal(config)
 		if err != nil {
-			return nil, fmt.Errorf("Error inserting name into config: %v", err)
+			return nil, fmt.Errorf("error inserting name into config: %v", err)
 		}
 	}
 
 	if _, ok := config["plugins"]; ok {
 		netConfigList, err = cni.ConfListFromBytes(configbytes)
 		if err != nil {
-			return nil, fmt.Errorf("Error getting conflist from bytes: %v", err)
+			return nil, fmt.Errorf("error getting conflist from bytes: %v", err)
 		}
 	} else {
 		netConfigList, err = cni.ConfListFromConfBytes(configbytes)
 		if err != nil {
-			return nil, fmt.Errorf("Error converting conf bytes to conflist: %v", err)
+			return nil, fmt.Errorf("error converting conf bytes to conflist: %v", err)
 		}
 	}
 
@@ -150,7 +151,7 @@ func GetNetworkCRDObject(kubeClient *client.KubeClient, name, namespace string) 
 	fmt.Fprintf(os.Stderr, "CNI Genie network attachment definition object (%s:%s) path: %s\n", namespace, name, path)
 	obj, err := kubeClient.GetRaw(path)
 	if err != nil {
-		return nil, fmt.Errorf("Error performing GET request: %v", err)
+		return nil, fmt.Errorf("error performing GET request: %v", err)
 	}
 	networkcrd := &NetworkAttachmentDefinition{}
 	err = json.Unmarshal(obj, networkcrd)

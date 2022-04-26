@@ -8,7 +8,6 @@ import (
 
 	"github.com/cni-genie/CNI-Genie/networkcrd"
 	"github.com/cni-genie/CNI-Genie/utils"
-	current "github.com/containernetworking/cni/pkg/types/040"
 	types040 "github.com/containernetworking/cni/pkg/types/040"
 )
 
@@ -38,7 +37,7 @@ func setGenieStatus(result types040.Result, name, ifName string, currStatus inte
 	return interface{}(multiIPPreferences)
 }
 
-func setNetAttachStatus(result current.Result, name, ifName string, currStatus interface{}) interface{} {
+func setNetAttachStatus(result types040.Result, name, ifName string, currStatus interface{}) interface{} {
 	netAttachStatus := &[]networkcrd.NetworkStatus{}
 	status := networkcrd.NetworkStatus{}
 	var ok bool

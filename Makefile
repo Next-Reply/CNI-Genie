@@ -33,6 +33,7 @@ dist/genie: $(SRCFILES)
 	echo "Building genie plugin..."
 	@GOPATH=$(GO_PATH) CGO_ENABLED=0 go build -v -o dist/genie \
 	-ldflags "-X main.VERSION=1.0 -s -w" cni-genie.go
+	docker build -t ghcr.io/next-reply/cnigenie -f conf/1.8/Dockerfile .
 
 nw-admission-controller-binary:
 	cd controllers/network-admission-controller && make

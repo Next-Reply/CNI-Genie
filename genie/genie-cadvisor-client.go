@@ -27,14 +27,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	. "github.com/cni-genie/CNI-Genie/utils"
-	"github.com/google/cadvisor/info/v1"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
 	"strings"
+
+	. "github.com/cni-genie/CNI-Genie/utils"
+	v1 "github.com/google/cadvisor/info/v1"
 )
 
 const (

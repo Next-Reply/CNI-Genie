@@ -2,11 +2,12 @@ package genie
 
 import (
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/cni-genie/CNI-Genie/networkcrd"
 	"github.com/cni-genie/CNI-Genie/utils"
 	"github.com/containernetworking/cni/libcni"
-	"os"
-	"strings"
 )
 
 const (
@@ -24,14 +25,14 @@ func (gc *GenieController) parseNetAttachDefAnnot(annot string, k8sArgs *utils.K
 
 	networks, err := networkcrd.GetNetworkInfo(annot, string(k8sArgs.K8S_POD_NAMESPACE))
 	if err != nil {
-		return nil, fmt.Errorf("Error parsing network selection annotation: %v", err)
+		return nil, fmt.Errorf("error parsing network selection annotation: %v", err)
 	}
 	fmt.Fprintf(os.Stderr, "CNI Genie network elements from network selection annotation: %+v\n", networks)
 
 	for _, netElem := range networks {
 		network, err := networkcrd.GetNetworkCRDObject(gc.Kc, netElem.Name, netElem.Namespace)
 		if err != nil {
-			return nil, fmt.Errorf("Error getting network crd object: %v", err)
+			return nil, fmt.Errorf("error getting network crd object: %v", err)
 		}
 
 		pluginInfo := utils.PluginInfo{}
@@ -64,12 +65,12 @@ func (gc *GenieController) getNetworkConfig(network *networkcrd.NetworkAttachmen
 	if network.Spec == emptySpec || network.Spec.Config == "" {
 		config, err = networkcrd.GetConfigFromFile(network, gc.Cfg.NetDir)
 		if err != nil {
-			return nil, fmt.Errorf("Error extracting plugin configuration from configuration file for net-attach-def object (%s:%s): %v", network.Namespace, network.Name, err)
+			return nil, fmt.Errorf("error extracting plugin configuration from configuration file for net-attach-def object (%s:%s): %v", network.Namespace, network.Name, err)
 		}
 	} else {
 		config, err = networkcrd.GetConfigFromSpec(network, gc.Cfg.CNI)
 		if err != nil {
-			return nil, fmt.Errorf("Error extracting plugin configuration from object spec for net-attach-def object (%s:%s): %v", network.Namespace, network.Name, err)
+			return nil, fmt.Errorf("error extracting plugin configuration from object spec for net-attach-def object (%s:%s): %v", network.Namespace, network.Name, err)
 		}
 	}
 
@@ -86,7 +87,7 @@ func (gc *GenieController) getNetworkConfig(network *networkcrd.NetworkAttachmen
 // of node.
 func (gc *GenieController) getClusterNetwork(cniDir string) (*libcni.NetworkConfigList, error) {
 	if len(gc.Cfg.Files) <= 1 {
-		return nil, fmt.Errorf("No cni plugin has been installed on node.")
+		return nil, fmt.Errorf("no cni plugin has been installed on node")
 	}
 	for _, file := range gc.Cfg.Files {
 		if strings.Contains(file, GenieConfFile) {
@@ -98,5 +99,5 @@ func (gc *GenieController) getClusterNetwork(cniDir string) (*libcni.NetworkConf
 		}
 		return config, nil
 	}
-	return nil, fmt.Errorf("Unable to select default cluster network. No valid configuration file present in cni directory.")
+	return nil, fmt.Errorf("unable to select default cluster network. No valid configuration file present in cni directory")
 }

@@ -16,11 +16,12 @@ import (
 	"crypto/md5"
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/cni-genie/CNI-Genie/utils"
 	"github.com/coreos/go-iptables/iptables"
 	"github.com/golang/glog"
-	"strconv"
-	"strings"
 )
 
 const (
@@ -70,12 +71,12 @@ func CreateBaseChain() (IpTables, error) {
 	rulespec := []string{"-j", GenieBaseNPCChain}
 	exists, err := iptable.Exists(FilterTable, ForwardChain, rulespec...)
 	if err != nil {
-		return IpTables{}, fmt.Errorf("Error while checking for Genie base rule in FORWARD chain: %v", err)
+		return IpTables{}, fmt.Errorf("error while checking for Genie base rule in FORWARD chain: %v", err)
 	}
 	if !exists {
 		err = iptable.Insert(FilterTable, ForwardChain, 1, rulespec...)
 		if err != nil {
-			return IpTables{}, fmt.Errorf("Error inserting a rule for Genie npc: %v", err)
+			return IpTables{}, fmt.Errorf("error inserting a rule for Genie npc: %v", err)
 		}
 	}
 
@@ -170,7 +171,7 @@ func (i *IpTables) DeleteNetworkChain(chain string) error {
 			cnt++
 			err = i.Delete(FilterTable, GenieBaseNPCChain, strconv.Itoa(pos))
 			if err != nil {
-				glog.Errorf("Error deleting rule for network chain (%s) from Genie base chain: %v", chain, err)
+				glog.Errorf("error deleting rule for network chain (%s) from Genie base chain: %v", chain, err)
 			} else {
 				pos--
 			}
@@ -210,7 +211,7 @@ func (i *IpTables) InsertRule(chain string, pos int, args []string) error {
 func (i *IpTables) DeleteNetworkChainRule(nwChain string, rules []string) ([]string, error) {
 	nwChainRules, err := i.List(FilterTable, nwChain)
 	if err != nil {
-		return nil, fmt.Errorf("Error listing rules for network chain (%s): %v", nwChain, err)
+		return nil, fmt.Errorf("error listing rules for network chain (%s): %v", nwChain, err)
 	}
 	glog.V(6).Infof("Network chain rules for network chain %s: %v", nwChain, nwChainRules)
 	policyRules := make(map[string]map[string]int)
@@ -287,11 +288,11 @@ func (i *IpTables) DeleteNetworkChainRule(nwChain string, rules []string) ([]str
 func (i *IpTables) DeleteIptableChain(table, chain string) error {
 	err := i.ClearChain(table, chain)
 	if err != nil {
-		return fmt.Errorf("Error flushing iptable chain (%s) before deleting it: %v", chain, err)
+		return fmt.Errorf("error flushing iptable chain (%s) before deleting it: %v", chain, err)
 	}
 	err = i.DeleteChain(table, chain)
 	if err != nil {
-		return fmt.Errorf("Error deleting iptable chain (%s): %v", chain, err)
+		return fmt.Errorf("error deleting iptable chain (%s): %v", chain, err)
 	}
 
 	return nil

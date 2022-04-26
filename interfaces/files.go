@@ -13,14 +13,14 @@ type RW interface {
 
 type IO struct{}
 
-func (_ IO) ReadFile(file string) ([]byte, error) {
+func (i IO) ReadFile(file string) ([]byte, error) {
 	return ioutil.ReadFile(file)
 }
 
-func (_ IO) ReadDir(dir string) ([]os.FileInfo, error) {
+func (i IO) ReadDir(dir string) ([]os.FileInfo, error) {
 	return ioutil.ReadDir(dir)
 }
 
-func (_ IO) CreateFile(filePath string, bytes []byte, perm os.FileMode) error {
+func (i IO) CreateFile(filePath string, bytes []byte, perm os.FileMode) error {
 	return ioutil.WriteFile(filePath, bytes, perm)
 }
